@@ -13,7 +13,7 @@ struct DailyWeatherConditions: Decodable {
 }
 
 struct DailyConditionsList: Decodable {
-    var time: Double
+    var time: Double  
     var icon: String
     var temperatureHigh: Double
     var temperatureLow: Double  
