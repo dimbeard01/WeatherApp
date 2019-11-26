@@ -80,6 +80,9 @@ final class DailyTableViewCell: UITableViewCell {
             let dateFormatter = DateFormatter()
             dateFormatter.locale = Locale(identifier: languageCode)
             dateFormatter.dateFormat = "EEEE"
+//            if dateFormatter.string(from: date).capitalized == "Суббота" {
+//                contentView.backgroundColor = .white
+//            }
             return dateFormatter.string(from: date).capitalized
         }()
         
@@ -118,7 +121,7 @@ final class DailyTableViewCell: UITableViewCell {
         
         temperatureNightLabel.snp.makeConstraints {
             $0.top.equalTo(contentView.snp.top).offset(5)
-            $0.bottom.equalTo(contentView.snp.bottom).offset(-5)
+         $0.bottom.equalTo(contentView.snp.bottom).offset(-5)
             $0.leading.equalTo(temperatureDayLabel.snp.trailing)
             $0.trailing.equalTo(contentView.snp.trailing).offset(-baseInset)
         }

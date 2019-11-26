@@ -13,20 +13,47 @@ final class WeatherForecastController: UIViewController {
     
     //MARK: - Properties
     
+    enum cellType: Int {
+        case dailyCell = 0
+        case currentlyCell
+        
+        func getHeight() -> CGFloat {
+            switch self {
+            case .dailyCell:
+                return 40
+            case .currentlyCell:
+                return 80
+            }
+        }
+        
+    }
+    
+    enum sectionType: Int {
+        case daily = 0
+        case currently
+    }
+    
+    let array = [["","","","","","","",""],["","","","","","","",""]]
+    
     private let dailyCellID: String = "dailyCellID"
     private let currentlyCellID: String = "currentlyCellID"
     private let hourlyCellID: String = "hourlyCellID"
 
-    var dailyConditions = [DailyConditionsList]()
+    var dailyConditionsList = [DailyConditionsList]()
+    var currentlyConditionsList = [CurrentWeatherConditions]()
+    
+    var newArray: CurrentConditionList?
+    
     var header = HeaderView()
 
     lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.register(DailyTableViewCell.self, forCellReuseIdentifier: dailyCellID)
+        tableView.register(CurrentlyTableViewCell.self, forCellReuseIdentifier: currentlyCellID)
         tableView.dataSource = self
         tableView.delegate = self
         tableView.backgroundColor = .clear
-        tableView.separatorStyle = .none
+        tableView.showsVerticalScrollIndicator = false
         return tableView
     }()
     
@@ -47,12 +74,12 @@ final class WeatherForecastController: UIViewController {
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-      
-        tableView.frame = CGRect(
-            x: 0,
-            y: header.headerView.frame.height,
-            width: view.frame.width,
-            height: view.frame.height)
+        tableView.snp.makeConstraints {
+            $0.top.equalTo(header.headerView.snp.bottom)
+            $0.leading.equalToSuperview()
+            $0.trailing.equalToSuperview()
+            $0.bottom.equalToSuperview()
+        }
     }
 
 
@@ -62,15 +89,17 @@ private func fetchWeatherForecast() {
     WeatherItemController.shared.fetchWeatherForecast { [weak self] (forecast) in
         if let forecast = forecast {
             DispatchQueue.main.async {
-                self?.updateUI(with: forecast.daily.data)
+                self?.updateUI(with: forecast)
             }
         }
     }
 }
     
-    private func updateUI(with day: [DailyConditionsList]) {
+    private func updateUI(with day: WeatherForecast) {
         DispatchQueue.main.async {
-            self.dailyConditions = day
+            self.dailyConditionsList = day.daily.data
+            self.currentlyConditionsList.append(day.currently)
+            self.newArray = CurrentConditionList(arrey: day.currently)
             self.tableView.reloadData()
         }
     }
@@ -79,23 +108,95 @@ private func fetchWeatherForecast() {
     // MARK: - Table view data source
 
 extension WeatherForecastController: UITableViewDataSource {
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return array.count
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return dailyConditions.count
+        switch section {
+        case sectionType.daily.rawValue:
+            return dailyConditionsList.count
+        case sectionType.currently.rawValue:
+            return newArray?.arrey.count ?? 0
+        default:
+            return 1
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: dailyCellID, for: indexPath) as? DailyTableViewCell else {
-            return DailyTableViewCell()
+        
+        switch indexPath.section {
+        case cellType.dailyCell.rawValue:
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: dailyCellID, for: indexPath) as? DailyTableViewCell else { return UITableViewCell() }
+            let today = dailyConditionsList[indexPath.row]
+            tableView.separatorStyle = .none
+            cell.configure(with: today)
+            cell.selectionStyle = .none
+            return cell
+            
+        case cellType.currentlyCell.rawValue:
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: currentlyCellID, for: indexPath) as? CurrentlyTableViewCell else { return UITableViewCell() }
+            guard let current = newArray else {return UITableViewCell()}
+            let cur = current.arrey[indexPath.row]
+            print("****************************************")
+            print(indexPath.row)
+            print("****************************************")
+            cell.configure(with: cur, indexPath: indexPath.row)
+            tableView.separatorStyle = .singleLine
+            tableView.separatorInset = UIEdgeInsets(top: -66, left: 40, bottom: 0, right: 40)
+            cell.selectionStyle = .none
+            return cell
+        
+        default:
+            return UITableViewCell()
         }
         
-        let today = dailyConditions[indexPath.row]
-        cell.configure(with: today)
-        cell.selectionStyle = .none
-        return cell
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return "HEADER"
+        switch section {
+        case sectionType.daily.rawValue:
+            return "HEADER"
+        default:
+            return nil
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        switch section {
+        case sectionType.daily.rawValue:
+            return 80
+        default:
+            return 0
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+
+        switch indexPath.section {
+        case cellType.dailyCell.rawValue:
+            return cellType.dailyCell.getHeight()
+        case cellType.currentlyCell.rawValue:
+            return cellType.currentlyCell.getHeight()
+        default:
+            return 40
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        return nil
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        switch section {
+        case cellType.dailyCell.rawValue:
+            return 0
+        case cellType.currentlyCell.rawValue:
+            return 0
+        default:
+            return 0
+        }
     }
     
 }
