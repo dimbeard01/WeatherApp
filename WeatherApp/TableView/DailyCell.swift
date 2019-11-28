@@ -1,14 +1,16 @@
 //
-//  DailyTableViewCell.swift
+//  DailyCell.swift
 //  WeatherApp
 //
 //  Created by Dima Surkov on 22.11.2019.
 //  Copyright © 2019 Dima Surkov. All rights reserved.
 //
 
+    // MARK: - WIP
+
 import UIKit
 
-final class DailyTableViewCell: UITableViewCell {
+final class DailyCell: UITableViewCell {
     
     // MARK: - Properties
 
@@ -35,7 +37,7 @@ final class DailyTableViewCell: UITableViewCell {
     private var temperatureNightLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 1
-        label.textColor = .gray
+        label.textColor = .lightGray
         label.font = UIFont.systemFont(ofSize: 18, weight: .thin)
         label.textAlignment = .right
         return label
@@ -64,30 +66,28 @@ final class DailyTableViewCell: UITableViewCell {
     
     // MARK: - Public
     
-    func configure(with dayOfWeek: DailyConditionsList) {
+    func configure(with condition: WeatherForecast.DailyConditionsList) {
+        
         temperatureNightLabel.text = {
-            let convertToCelsius = ((dayOfWeek.temperatureLow - 32)*(5/9))
+            let convertToCelsius = ((condition.temperatureLow - 32)*(5/9))
             return String(format: "%.f", convertToCelsius)
         }()
         
         temperatureDayLabel.text = {
-            let convertToCelsius = ((dayOfWeek.temperatureHigh - 32)*(5/9))
+            let convertToCelsius = ((condition.temperatureHigh - 32)*(5/9))
             return String(format: "%.f", convertToCelsius)
         }()
         
         dayOfWeekLabel.text = {
-            let date = Date(timeIntervalSince1970: dayOfWeek.time)
+            let date = Date(timeIntervalSince1970: condition.time)
             let dateFormatter = DateFormatter()
             dateFormatter.locale = Locale(identifier: languageCode)
             dateFormatter.dateFormat = "EEEE"
-//            if dateFormatter.string(from: date).capitalized == "Суббота" {
-//                contentView.backgroundColor = .white
-//            }
             return dateFormatter.string(from: date).capitalized
         }()
         
         weatherIconImage.image = {
-            let image = UIImage(named: dayOfWeek.icon)
+            let image = UIImage(named: condition.icon)
             return image
         }()
     }
@@ -95,8 +95,7 @@ final class DailyTableViewCell: UITableViewCell {
     // MARK: - Layout
 
     private func makeLayout(){
-        
-        let baseInset: CGFloat = (contentView.frame.width*5/100)
+        let baseInset: CGFloat = (contentView.frame.width*7/100)
 
         dayOfWeekLabel.snp.makeConstraints {
             $0.top.equalTo(contentView.snp.top).offset(5)
@@ -109,19 +108,19 @@ final class DailyTableViewCell: UITableViewCell {
             $0.top.equalTo(contentView.snp.top).offset(5)
             $0.bottom.equalTo(contentView.snp.bottom).offset(-5)
             $0.centerX.equalTo(contentView.snp.centerX)
-            $0.height.equalTo(30)
-            $0.width.equalTo(40)
+            $0.height.equalTo(20)
+            $0.width.equalTo(25)
         }
 
         temperatureDayLabel.snp.makeConstraints {
             $0.top.equalTo(contentView.snp.top).offset(5)
             $0.bottom.equalTo(contentView.snp.bottom).offset(-5)
-            $0.trailing.equalTo(temperatureNightLabel.snp.leading).offset(-baseInset)
+            $0.trailing.equalTo(contentView.snp.trailing).offset(-contentView.frame.width/4)
         }
         
         temperatureNightLabel.snp.makeConstraints {
             $0.top.equalTo(contentView.snp.top).offset(5)
-         $0.bottom.equalTo(contentView.snp.bottom).offset(-5)
+            $0.bottom.equalTo(contentView.snp.bottom).offset(-5)
             $0.leading.equalTo(temperatureDayLabel.snp.trailing)
             $0.trailing.equalTo(contentView.snp.trailing).offset(-baseInset)
         }

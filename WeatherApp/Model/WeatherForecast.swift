@@ -9,30 +9,66 @@
 import UIKit
 
 struct WeatherForecast: Decodable {
-    var latitude: Double
-    var longitude: Double
-    var timezone: String
-    var currently: CurrentWeatherConditions
-    var hourly: HourlyWeatherConditions
-    var daily: DailyWeatherConditions
+    let latitude: Double
+    let longitude: Double
+    let timezone: String
+    let currently: CurrentConditions
+    let hourly: HourlyConditions
+    let daily: DailyConditions
 
-    enum CodingKeys: String, CodingKey {
-        case latitude
-        case longitude
-        case timezone
-        case currently
-        case hourly
-        case daily
+}
 
+extension WeatherForecast {
+    
+    struct CurrentConditions: Decodable {
+        let time: Double
+        let summary: String
+        let icon: String
+        let precipProbability: Double
+        let precipAccumulation: Double?
+        let temperature: Double
+        let apparentTemperature: Double
+        let humidity: Double
+        let pressure: Double
+        let windSpeed: Double
+        let windBearing: Double
+        let uvIndex: Double
+        let visibility: Double
+    }
+    
+    struct CurrentlyConditionsList: Decodable {
+        var data = [Double]()
+        
+        init(with condition: CurrentConditions) {
+            self.data.append(condition.precipProbability)
+            self.data.append(condition.humidity)
+            self.data.append(condition.windSpeed)
+            self.data.append(condition.apparentTemperature)
+            self.data.append(condition.precipAccumulation ?? 0)
+            self.data.append(condition.pressure)
+            self.data.append(condition.visibility)
+            self.data.append(condition.uvIndex)
+        }
+    }
+    
+    struct HourlyConditions: Decodable {
+        let data: [HourlyConditionsList]
+    }
+    
+    struct HourlyConditionsList: Decodable {
+        let time: Double
+        let icon: String
+        let temperature: Double
     }
 
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.latitude = try container.decode(Double.self, forKey: .latitude)
-        self.longitude = try container.decode(Double.self, forKey: .longitude)
-        self.timezone = try container.decode(String.self, forKey: .timezone)
-        self.currently = try container.decode(CurrentWeatherConditions.self, forKey: .currently)
-        self.hourly = try container.decode(HourlyWeatherConditions.self, forKey: .hourly)
-        self.daily = try container.decode(DailyWeatherConditions.self, forKey: .daily)
+    struct DailyConditions: Decodable {
+        let data: [DailyConditionsList]
+    }
+    
+    struct DailyConditionsList: Decodable {
+        let time: Double
+        let icon: String
+        let temperatureHigh: Double
+        let temperatureLow: Double
     }
 }
