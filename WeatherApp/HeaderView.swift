@@ -6,43 +6,51 @@
 //  Copyright © 2019 Dima Surkov. All rights reserved.
 //
 
-    // MARK: - WIP
-
 import UIKit
 
 class HeaderView: UIView {
     
     // MARK: - Properties
 
-    let headerView: UIView = {
+    private let headerView: UIView = {
         let view = UIView()
         view.backgroundColor = #colorLiteral(red: 0.3321021472, green: 0.3457777109, blue: 0.6376527342, alpha: 1)
         view.alpha = 0.3
         return view
     }()
     
-    let cityLabel: UILabel = {
+    private let cityLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 1
         label.textColor = .white
         label.font = UIFont.systemFont(ofSize: 30, weight: .semibold)
         label.text = "Omsk"
+        label.textAlignment = .center
         return label
     }()
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        makeLayout()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: - Layout
 
     func makeLayout() {
+        addSubview(headerView)
+        addSubview(cityLabel)
+        
         headerView.snp.makeConstraints {
-            $0.top.equalToSuperview()
-            $0.leading.equalToSuperview()
-            $0.trailing.equalToSuperview()
-            $0.height.equalTo(100)
-            
+            $0.edges.equalToSuperview()
+        }
+        
         cityLabel.snp.makeConstraints {
-            $0.centerX.equalTo(headerView.snp.centerX)
+            $0.leading.trailing.equalToSuperview()
             $0.centerY.equalTo(headerView.snp.centerY)
-            }
         }
     }
 }

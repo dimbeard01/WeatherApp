@@ -12,44 +12,34 @@ import SnapKit
 final class WeatherForecastController: UIViewController {
     
     // MARK: - Properties
-    
-    enum cellType: Int {
-        case dailyCell = 0
-        case currentDescriptionCell
-        case currentlyCell
-        
-        func getHeight() -> CGFloat {
-            switch self {
-            case .dailyCell:
-                return 30
-            case .currentDescriptionCell:
-                return UITableView.automaticDimension
-            case .currentlyCell:
-                return 60
-            }
-        }
-        
-    }
-    
-    enum sectionType: Int {
-        case daily = 0
-        case currentSummary
-        case currently
-    }
-    
+
     private var weatherModel: WeatherForecastViewModel?
-    private var header = HeaderView()
+    private var headerView = HeaderView()
     private var collectionHeader = HourlyCollectionView()
+    private var currentHeight: CGFloat = 140
+    private lazy var heightConstraint: NSLayoutConstraint = {
+        let constraint = NSLayoutConstraint(
+            item: headerView,
+            attribute: .height,
+            relatedBy: .equal,
+            toItem: nil,
+            attribute: .height,
+            multiplier: 1,
+            constant: currentHeight)
+        return constraint
+    }()
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
-        tableView.register(DailyCell.self, forCellReuseIdentifier: DailyCell.dailyCellID)
-        tableView.register(CurrentDescriptionCell.self, forCellReuseIdentifier: CurrentDescriptionCell.currentDescriptionCellID)
+        tableView.register(DailyTableViewCell.self, forCellReuseIdentifier: DailyTableViewCell.dailyCellID)
+        tableView.register(CurrentDescriptionCell.self, forCellReuseIdentifier: CurrentDescriptionCell.identifier)
         tableView.register(CurrentlyCell.self, forCellReuseIdentifier: CurrentlyCell.currentlyCellID)
+        tableView.tableHeaderView = collectionHeader
         tableView.dataSource = self
         tableView.delegate = self
         tableView.backgroundColor = .clear
         tableView.showsVerticalScrollIndicator = false
+        tableView.separatorStyle = .none
         return tableView
     }()
     
@@ -58,50 +48,101 @@ final class WeatherForecastController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        fetchWeatherForecast()
-        
+        makeLayout()
         view.backgroundColor = UIColor(patternImage: #imageLiteral(resourceName: "back"))
-        view.addSubview(header.headerView)
-        view.addSubview(header.cityLabel)
-        tableView.tableHeaderView = collectionHeader
-        header.makeLayout()
-        view.addSubview(tableView)
-
+        fetchWeatherForecast()
     }
     
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
+    private func makeLayout() {
+        view.addSubview(headerView)
+        view.addSubview(tableView)
+        
+        headerView.snp.makeConstraints {
+            $0.top.equalToSuperview()
+            $0.leading.trailing.equalToSuperview()
+        }
+        heightConstraint.isActive = true
+        
         tableView.snp.makeConstraints {
-            $0.top.equalTo(header.headerView.snp.bottom)
+            $0.top.equalToSuperview().offset(currentHeight)
             $0.leading.equalToSuperview()
             $0.trailing.equalToSuperview()
             $0.bottom.equalToSuperview()
         }
-        collectionHeader.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 150)
+    }
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        
+        collectionHeader.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 150)
     }
 
 
     // MARK: - Support
 
-private func fetchWeatherForecast() {
-    WeatherItemController.shared.fetchWeatherForecast { [weak self] (forecast) in
-        if let forecast = forecast {
-            DispatchQueue.main.async {
-                print(forecast)
-                self?.updateUI(with: forecast)
+    private func fetchWeatherForecast() {
+        WeatherItemController.shared.fetchWeatherForecast { [weak self] (forecast) in
+            if let forecast = forecast {
+                DispatchQueue.main.async {
+                    self?.updateUI(with: forecast)
+                }
             }
         }
     }
-}
     
     private func updateUI(with data: WeatherForecast) {
         DispatchQueue.main.async {
-            let s = WeatherForecastViewModel(with: data)
-            self.collectionHeader.data = s
-            self.weatherModel = s
+            let model = WeatherForecastViewModel(with: data)
+            self.collectionHeader.model = model
+            self.weatherModel = model
             self.tableView.reloadData()
         }
     }
+}
+
+extension WeatherForecastController {
+    
+    enum SectionType: Int, CaseIterable {
+         case daily = 0
+         case description
+         case currently
+         
+         var height: CGFloat {
+             switch self {
+             case .daily:
+                 return 30
+             case .description:
+                 return UITableView.automaticDimension
+             case .currently:
+                 return 60
+             }
+         }
+         
+         func getHeight() -> CGFloat {
+             switch self {
+             case .daily:
+                 return 30
+             case .description:
+                 return UITableView.automaticDimension
+             case .currently:
+                 return 60
+             }
+         }
+         
+         init(section: Int) {
+             switch section {
+             case 0:
+                 self = .daily
+             case 1:
+                 self = .description
+             case 2:
+                 self = .currently
+             default:
+                 assertionFailure("Unresolved section index")
+                 self = .daily
+             }
+         }
+     }
 }
 
     // MARK: - Table view data source
@@ -109,60 +150,67 @@ private func fetchWeatherForecast() {
 extension WeatherForecastController: UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 3
+        return SectionType.allCases.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
         guard let model = weatherModel else { return 0 }
     
-        switch section {
-        case sectionType.daily.rawValue:
+        switch SectionType(section: section) {
+        case .daily:
             return model.daysList.count
             
-        case sectionType.currentSummary.rawValue:
+        case .description:
             return 1
             
-        case sectionType.currently.rawValue:
+        case .currently:
             return model.currentConditionsList.count
-            
-        default:
-            return 0
         }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        guard let model = weatherModel else { return UITableViewCell() }
-
-        switch indexPath.section {
-        case cellType.dailyCell.rawValue:
-            let cell = DailyCell()
-            let data = model.daysList[indexPath.row]
-            cell.configure(with: data)
-            tableView.separatorStyle = .none
-            cell.selectionStyle = .none
-            return cell
+        switch SectionType(section: indexPath.section) {
+        case .daily:
+            return dailyCell(tableView, cellForRowAt: indexPath)
             
-        case cellType.currentDescriptionCell.rawValue:
-            let cell = CurrentDescriptionCell()
-            let data = model.currentDescription
-            cell.configure(with: data)
-            tableView.separatorStyle = .none
-            cell.selectionStyle = .none
-            return cell
+        case .description:
+            return descriptionCell(tableView, cellForRowAt: indexPath)
             
-        case cellType.currentlyCell.rawValue:
-            let cell = CurrentlyCell()
-            let data = model.currentConditionsList[indexPath.row]
-            cell.configure(with: data, indexPath: indexPath.row)
-            tableView.separatorStyle = .none
-            cell.selectionStyle = .none
-            return cell
-        
-        default:
-            return UITableViewCell()
+        case .currently:
+            return currentlyCell(tableView, cellForRowAt: indexPath)
         }
+    }
+    
+    // MARK: - Setup Cells
+    
+    private func currentlyCell(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: CurrentlyCell.currentlyCellID, for: indexPath) as? CurrentlyCell else { return UITableViewCell() }
+        guard let model = weatherModel else { return UITableViewCell() }
+        
+        let cellModel = model.currentConditionsList[indexPath.row]
+        cell.configure(with: cellModel, indexPath: indexPath.row)
+
+        return cell
+    }
+    
+    private func descriptionCell(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: CurrentDescriptionCell.identifier, for: indexPath) as? CurrentDescriptionCell else { return UITableViewCell() }
+        guard let model = weatherModel else { return UITableViewCell() }
+    
+        let cellModel = model.currentDescription
+        cell.configure(with: cellModel)
+
+        return cell
+    }
+    
+    private func dailyCell(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: DailyTableViewCell.dailyCellID, for: indexPath) as? DailyTableViewCell else { return UITableViewCell() }
+        guard let model = weatherModel else { return UITableViewCell() }
+    
+        let cellModel = model.daysList[indexPath.row]
+        cell.configure(with: cellModel)
+
+        return cell
     }
     
 }
@@ -174,19 +222,24 @@ extension WeatherForecastController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
         switch indexPath.section {
-        case cellType.dailyCell.rawValue:
-            return cellType.dailyCell.getHeight()
+        case SectionType.daily.rawValue:
+            return SectionType.daily.height
             
-        case cellType.currentDescriptionCell.rawValue:
-            return cellType.currentDescriptionCell.getHeight()
+        case SectionType.description.rawValue:
+            return SectionType.description.getHeight()
             
-        case cellType.currentlyCell.rawValue:
-            return cellType.currentlyCell.getHeight()
+        case SectionType.currently.rawValue:
+            return SectionType.currently.getHeight()
             
         default:
             return 40
         }
     }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        heightConstraint.constant += -scrollView.contentOffset.y
+    }
+
 }
     
 

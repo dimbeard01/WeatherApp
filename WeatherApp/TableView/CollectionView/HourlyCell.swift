@@ -1,5 +1,5 @@
 //
-//  HourlyCell.swift
+//  HourlyCollectionViewCell.swift
 //  WeatherApp
 //
 //  Created by Dima Surkov on 28.11.2019.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class HourlyCell: UICollectionViewCell {
+final class HourlyCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Properties
     
@@ -41,7 +41,9 @@ class HourlyCell: UICollectionViewCell {
     
     // MARK: - Public
     
-    func configure(with condition: WeatherForecast.HourlyConditionsList) {
+    func configure(with condition: WeatherForecast.HourlyConditionsList?) {
+        guard let condition = condition else { return }
+        
         hourLabel.text = {
             let date = Date(timeIntervalSince1970: condition.time)
             let dateFormatter = DateFormatter()
@@ -63,9 +65,7 @@ class HourlyCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        backgroundColor = .lightGray
-        
-        [hourLabel, weatherIconImage, temperatureLabel].forEach { contentView.addSubview($0) }
+        backgroundColor = .clear
         makeLayout()
     }
     
@@ -76,18 +76,23 @@ class HourlyCell: UICollectionViewCell {
     // MARK: - Layout
     
     private func makeLayout() {
+        [hourLabel, weatherIconImage, temperatureLabel].forEach { contentView.addSubview($0) }
+        
         hourLabel.snp.makeConstraints {
-            $0.top.equalTo(contentView.snp.top).offset(5)
-            $0.centerX.equalTo(contentView.snp.centerX)
+            $0.top.equalToSuperview().offset(5)
+            $0.leading.trailing.equalToSuperview()
         }
         
         weatherIconImage.snp.makeConstraints {
-            $0.center.equalTo(contentView.center)
+            $0.top.equalToSuperview().offset(5)
+            $0.center.equalToSuperview()
+            $0.width.height.equalTo(20)
         }
         
         temperatureLabel.snp.makeConstraints {
             $0.centerX.equalTo(contentView.snp.centerX)
-            $0.bottom.equalTo(contentView.snp.bottom).offset(-5)
+            $0.bottom.equalToSuperview().offset(-5)
+            $0.trailing.leading.equalToSuperview().inset(5)
         }
     }
 }

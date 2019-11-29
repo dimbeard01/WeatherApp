@@ -14,7 +14,7 @@ final class CurrentDescriptionCell: UITableViewCell {
     
     // MARK: - Properties
     
-    static let currentDescriptionCellID: String = "currentDescriptionCellID"
+    static let identifier: String = "currentDescriptionCellID"
 
     private var topSeparator: UIView = {
         let separator = UIView()
@@ -50,8 +50,7 @@ final class CurrentDescriptionCell: UITableViewCell {
     // MARK: - Public
 
     func configure(with condition: WeatherForecast.CurrentConditions) {
-        
-        let temperatureAConvertToCelsius = ((condition.temperature - 32)*(5/9))
+        let temperatureAConvertToCelsius = (condition.temperature - 32) * (5 / 9)
         let temeperature =  String(format: "%.f", temperatureAConvertToCelsius)
         
         descriptionLabel.text = {
@@ -84,29 +83,27 @@ final class CurrentDescriptionCell: UITableViewCell {
     
     // MARK: - Layout
 
-    private func makeLayout(){
-        let baseInset: CGFloat = (contentView.frame.width*5/100)
-        
+    private func makeLayout() {
         topSeparator.snp.makeConstraints {
-            $0.top.equalTo(contentView.snp.top).offset(1)
+            $0.top.equalTo(contentView.snp.top)
             $0.leading.equalTo(contentView.snp.leading)
             $0.trailing.equalTo(contentView.snp.trailing)
-            $0.height.equalTo(0.7)
+            $0.height.equalTo(0.5)
         }
         
         descriptionLabel.snp.makeConstraints {
             $0.top.equalTo(contentView.snp.top).offset(10)
-            $0.leading.equalTo(contentView.snp.leading).offset(baseInset)
+            $0.leading.equalTo(contentView.snp.leading).offset(20)
             $0.bottom.equalTo(bottomSeparator.snp.top).offset(-10)
-            $0.trailing.equalTo(contentView.snp.trailing).offset(-baseInset*2)
+            $0.trailing.equalTo(contentView.snp.trailing).offset(-40)
         }
         
         bottomSeparator.snp.makeConstraints {
             $0.top.equalTo(descriptionLabel.snp.bottom)
             $0.leading.equalTo(contentView.snp.leading)
-            $0.bottom.equalTo(contentView.snp.bottom).offset(-1)
+            $0.bottom.equalTo(contentView.snp.bottom)
             $0.trailing.equalTo(contentView.snp.trailing)
-            $0.height.equalTo(0.7)
+            $0.height.equalTo(0.5)
         }
     }
 }

@@ -15,7 +15,6 @@ struct WeatherForecast: Decodable {
     let currently: CurrentConditions
     let hourly: HourlyConditions
     let daily: DailyConditions
-
 }
 
 extension WeatherForecast {
@@ -38,16 +37,16 @@ extension WeatherForecast {
     
     struct CurrentlyConditionsList: Decodable {
         var data = [Double]()
-        
+    
         init(with condition: CurrentConditions) {
-            self.data.append(condition.precipProbability)
-            self.data.append(condition.humidity)
-            self.data.append(condition.windSpeed)
-            self.data.append(condition.apparentTemperature)
-            self.data.append(condition.precipAccumulation ?? 0)
-            self.data.append(condition.pressure)
-            self.data.append(condition.visibility)
-            self.data.append(condition.uvIndex)
+            data.append(condition.precipProbability)
+            data.append(condition.humidity)
+            data.append(condition.windSpeed)
+            data.append(condition.apparentTemperature)
+            data.append(condition.precipAccumulation ?? 0)
+            data.append(condition.pressure)
+            data.append(condition.visibility)
+            data.append(condition.uvIndex)
         }
     }
     

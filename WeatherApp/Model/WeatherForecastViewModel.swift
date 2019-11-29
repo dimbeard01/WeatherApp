@@ -8,14 +8,19 @@
 
 import UIKit
 
-class WeatherForecastViewModel {
-    let timezone: String
-    let daysList: [WeatherForecast.DailyConditionsList]
-    let hoursList: [WeatherForecast.HourlyConditionsList]
-    let currentConditionsList: [Double]
-    let currentDescription: WeatherForecast.CurrentConditions
+struct WeatherForecastViewModel {
     
-    init(with model: WeatherForecast){
+    typealias DailyConditionsList = WeatherForecast.DailyConditionsList
+    typealias HourlyConditionsList = WeatherForecast.HourlyConditionsList
+    typealias CurrentConditions = WeatherForecast.CurrentConditions
+    
+    let timezone: String
+    let daysList: [DailyConditionsList]
+    let hoursList: [HourlyConditionsList]
+    let currentConditionsList: [Double]
+    let currentDescription: CurrentConditions
+    
+    init(with model: WeatherForecast) {
         timezone = model.timezone
         daysList = model.daily.data
         hoursList = model.hourly.data

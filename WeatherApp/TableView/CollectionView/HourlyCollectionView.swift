@@ -10,39 +10,82 @@ import UIKit
 
 class HourlyCollectionView: UICollectionView {
     
-    var data: WeatherForecastViewModel?
+    var model: WeatherForecastViewModel? {
+        didSet {
+            reloadData()
+        }
+    }
     
     private let flowLayout: UICollectionViewFlowLayout = {
         let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
         return layout
     }()
     
-    init() {
+    private let topSeparator: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        return view
+    }()
+    
+    private let bottomSeparator: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        return view
+    }()
+    
+    private let wrapperBackgroundView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .clear
+        return view
+    }()
+    
+    override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
         super.init(frame: .zero, collectionViewLayout: flowLayout)
-        register(HourlyCell.self, forCellWithReuseIdentifier: HourlyCell.hourlyCellID)
+        
+        register(HourlyCollectionViewCell.self, forCellWithReuseIdentifier: HourlyCollectionViewCell.hourlyCellID)
         dataSource = self
         delegate = self
-        backgroundColor = .yellow
+        backgroundColor = .clear
         showsHorizontalScrollIndicator = false
+        makeLayout()
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func makeLayout() {
+        backgroundView = wrapperBackgroundView
+        wrapperBackgroundView.addSubview(bottomSeparator)
+        wrapperBackgroundView.addSubview(topSeparator)
+        
+        topSeparator.snp.makeConstraints {
+            $0.top.equalToSuperview()
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(0.5)
+        }
+        
+        bottomSeparator.snp.makeConstraints {
+            $0.bottom.equalToSuperview()
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(0.5)
+        }
     }
 }
 
 extension HourlyCollectionView: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        guard let data = data else {  fatalError("No data ") }
-        return data.hoursList.count
+        return model?.hoursList.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let data = data else { return UICollectionViewCell() }
-
-        let cell = HourlyCell()
-        cell.configure(with: data.hoursList[indexPath.item])
+        
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HourlyCollectionViewCell.hourlyCellID, for: indexPath) as? HourlyCollectionViewCell else { return UICollectionViewCell() }
+        
+        cell.configure(with: model?.hoursList[indexPath.item])
+        
         return cell
     }
     
@@ -52,14 +95,15 @@ extension HourlyCollectionView: UICollectionViewDataSource {
 extension HourlyCollectionView: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let height: CGFloat = 150
-        let width: CGFloat = 320
-        
-        return CGSize(width: width, height: height)
+        return CGSize(width: 40, height: collectionView.bounds.height)
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        
-            return UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 0
     }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return 0
+    }
+
 }

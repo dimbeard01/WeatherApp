@@ -51,8 +51,9 @@ final class CurrentlyCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
+        selectionStyle = .none
         backgroundColor = .clear
-        [separator, descriptionLabel, conditionLabel].forEach { contentView.addSubview($0) }
         makeLayout()
     }
     
@@ -114,6 +115,7 @@ final class CurrentlyCell: UITableViewCell {
     // MARK: - Layout
     
     private func makeLayout() {
+        [separator, descriptionLabel, conditionLabel].forEach { contentView.addSubview($0) }
         descriptionLabel.snp.makeConstraints {
             $0.top.equalTo(contentView.snp.top).offset(5)
             $0.leading.equalTo(contentView.snp.leading).offset(20)

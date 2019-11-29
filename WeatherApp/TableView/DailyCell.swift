@@ -10,51 +10,54 @@
 
 import UIKit
 
-final class DailyCell: UITableViewCell {
+final class DailyTableViewCell: UITableViewCell {
     
     // MARK: - Properties
 
-    private let languageCode = "ru_RU"
     static let dailyCellID: String = "dailyCellID"
-
-    private var dayOfWeekLabel: UILabel = {
+    
+    private let languageCode = "ru_RU"
+    
+    private let dayOfWeekLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 1
         label.textColor = .white
-        label.font = UIFont.systemFont(ofSize: 18, weight: .thin)
+        label.font = .systemFont(ofSize: 18, weight: .thin)
         label.textAlignment = .left
         return label
     }()
     
-    private var temperatureDayLabel: UILabel = {
+    private let temperatureDayLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 1
         label.textColor = .white
-        label.font = UIFont.systemFont(ofSize: 18, weight: .thin)
+        label.font = .systemFont(ofSize: 18, weight: .thin)
         label.textAlignment = .right
         return label
     }()
     
-    private var temperatureNightLabel: UILabel = {
+    private let temperatureNightLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 1
         label.textColor = .lightGray
-        label.font = UIFont.systemFont(ofSize: 18, weight: .thin)
+        label.font = .systemFont(ofSize: 18, weight: .thin)
         label.textAlignment = .right
         return label
     }()
     
-    private var weatherIconImage: UIImageView = {
+    private let weatherIconImage: UIImageView = {
         let image = UIImageView()
         image.contentMode = .scaleAspectFit
-        image.backgroundColor = UIColor.clear
+        image.backgroundColor = .clear
         return image
     }()
     
+    // MARK: - Init
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
         backgroundColor = .clear
-        [dayOfWeekLabel, weatherIconImage, temperatureDayLabel, temperatureNightLabel].forEach { contentView.addSubview($0) }
         makeLayout()
     }
 
@@ -65,14 +68,14 @@ final class DailyCell: UITableViewCell {
     // MARK: - Public
     
     func configure(with condition: WeatherForecast.DailyConditionsList) {
-        
+
         temperatureNightLabel.text = {
-            let convertToCelsius = ((condition.temperatureLow - 32)*(5/9))
+            let convertToCelsius: Double = (condition.temperatureLow - 32) * (5 / 9)
             return String(format: "%.f", convertToCelsius)
         }()
         
         temperatureDayLabel.text = {
-            let convertToCelsius = ((condition.temperatureHigh - 32)*(5/9))
+            let convertToCelsius: Double = (condition.temperatureHigh - 32) * (5 / 9)
             return String(format: "%.f", convertToCelsius)
         }()
         
@@ -84,21 +87,18 @@ final class DailyCell: UITableViewCell {
             return dateFormatter.string(from: date).capitalized
         }()
         
-        weatherIconImage.image = {
-            let image = UIImage(named: condition.icon)
-            return image
-        }()
+        weatherIconImage.image = UIImage(named: condition.icon)
     }
     
     // MARK: - Layout
 
-    private func makeLayout(){
-        let baseInset: CGFloat = (contentView.frame.width*7/100)
-
+    private func makeLayout() {
+         [dayOfWeekLabel, weatherIconImage, temperatureDayLabel, temperatureNightLabel].forEach { contentView.addSubview($0) }
+        
         dayOfWeekLabel.snp.makeConstraints {
             $0.top.equalTo(contentView.snp.top).offset(5)
             $0.bottom.equalTo(contentView.snp.bottom).offset(-5)
-            $0.leading.equalTo(contentView.snp.leading).offset(baseInset)
+            $0.leading.equalTo(contentView.snp.leading).offset(20)
             $0.width.equalTo((38*contentView.frame.width)/100)
         }
         
@@ -120,7 +120,7 @@ final class DailyCell: UITableViewCell {
             $0.top.equalTo(contentView.snp.top).offset(5)
             $0.bottom.equalTo(contentView.snp.bottom).offset(-5)
             $0.leading.equalTo(temperatureDayLabel.snp.trailing)
-            $0.trailing.equalTo(contentView.snp.trailing).offset(-baseInset)
+            $0.trailing.equalTo(contentView.snp.trailing).offset(-20)
         }
     }
 }
