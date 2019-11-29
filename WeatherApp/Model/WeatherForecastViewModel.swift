@@ -8,7 +8,7 @@
 
 import UIKit
 
-struct WeatherForecastViewModel {
+class WeatherForecastViewModel {
     let timezone: String
     let daysList: [WeatherForecast.DailyConditionsList]
     let hoursList: [WeatherForecast.HourlyConditionsList]

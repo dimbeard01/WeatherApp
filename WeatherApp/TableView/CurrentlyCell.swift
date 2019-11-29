@@ -14,6 +14,8 @@ final class CurrentlyCell: UITableViewCell {
     
     // MARK: - Properties
     
+    static let currentlyCellID: String = "currentlyCellID"
+
     enum currentConditionType: Int {
         case precipProbability = 0
         case humidity
@@ -50,9 +52,7 @@ final class CurrentlyCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         backgroundColor = .clear
-        contentView.addSubview(separator)
-        contentView.addSubview(descriptionLabel)
-        contentView.addSubview(conditionLabel)
+        [separator, descriptionLabel, conditionLabel].forEach { contentView.addSubview($0) }
         makeLayout()
     }
     
@@ -102,7 +102,7 @@ final class CurrentlyCell: UITableViewCell {
 
         case currentConditionType.uvIndex.rawValue:
             descriptionLabel.text = "уф-индекс".uppercased()
-            let uvIndex = String(format: "%.1f", (condition))
+            let uvIndex = String(format: "%.0f", (condition))
             conditionLabel.text = "\(uvIndex)"
             separator.isHidden = true
             

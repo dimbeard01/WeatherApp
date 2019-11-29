@@ -13,6 +13,8 @@ import UIKit
 final class CurrentDescriptionCell: UITableViewCell {
     
     // MARK: - Properties
+    
+    static let currentDescriptionCellID: String = "currentDescriptionCellID"
 
     private var topSeparator: UIView = {
         let separator = UIView()
@@ -37,9 +39,7 @@ final class CurrentDescriptionCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         backgroundColor = .clear
-        contentView.addSubview(topSeparator)
-        contentView.addSubview(bottomSeparator)
-        contentView.addSubview(descriptionLabel)
+        [topSeparator, descriptionLabel, bottomSeparator].forEach { contentView.addSubview($0) }
         makeLayout()
     }
     

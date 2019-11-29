@@ -15,7 +15,8 @@ final class DailyCell: UITableViewCell {
     // MARK: - Properties
 
     private let languageCode = "ru_RU"
-    
+    static let dailyCellID: String = "dailyCellID"
+
     private var dayOfWeekLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 1
@@ -53,10 +54,7 @@ final class DailyCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         backgroundColor = .clear
-        contentView.addSubview(dayOfWeekLabel)
-        contentView.addSubview(temperatureNightLabel)
-        contentView.addSubview(temperatureDayLabel)
-        contentView.addSubview(weatherIconImage)
+        [dayOfWeekLabel, weatherIconImage, temperatureDayLabel, temperatureNightLabel].forEach { contentView.addSubview($0) }
         makeLayout()
     }
 

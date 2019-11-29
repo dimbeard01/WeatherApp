@@ -12,6 +12,8 @@
 		AE001E4423855E51006B37D6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AE001E4223855E51006B37D6 /* LaunchScreen.storyboard */; };
 		AE001E4C23857024006B37D6 /* WeatherItemController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE001E4B23857024006B37D6 /* WeatherItemController.swift */; };
 		AE2704262387F58700BD9E64 /* DailyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE2704252387F58700BD9E64 /* DailyCell.swift */; };
+		AE9B80B823902B3B001B05E4 /* HourlyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE9B80B723902B3B001B05E4 /* HourlyCell.swift */; };
+		AE9B80BA239031C2001B05E4 /* HourlyCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE9B80B9239031C2001B05E4 /* HourlyCollectionView.swift */; };
 		AEC480B8238942F600AEC55D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AEC480B7238942F600AEC55D /* Assets.xcassets */; };
 		AECFB3F42387D61600FEA01E /* WeatherForecastController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AECFB3F32387D61600FEA01E /* WeatherForecastController.swift */; };
 		AECFB3F72387E98300FEA01E /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AECFB3F62387E98300FEA01E /* HeaderView.swift */; };
@@ -30,6 +32,8 @@
 		AE001E4523855E51006B37D6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AE001E4B23857024006B37D6 /* WeatherItemController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherItemController.swift; sourceTree = "<group>"; };
 		AE2704252387F58700BD9E64 /* DailyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyCell.swift; sourceTree = "<group>"; };
+		AE9B80B723902B3B001B05E4 /* HourlyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlyCell.swift; sourceTree = "<group>"; };
+		AE9B80B9239031C2001B05E4 /* HourlyCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlyCollectionView.swift; sourceTree = "<group>"; };
 		AEC480B7238942F600AEC55D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AECFB3F32387D61600FEA01E /* WeatherForecastController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherForecastController.swift; sourceTree = "<group>"; };
 		AECFB3F62387E98300FEA01E /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
@@ -86,6 +90,15 @@
 			path = WeatherApp;
 			sourceTree = "<group>";
 		};
+		AE9B80B623902AC6001B05E4 /* CollectionView */ = {
+			isa = PBXGroup;
+			children = (
+				AE9B80B723902B3B001B05E4 /* HourlyCell.swift */,
+				AE9B80B9239031C2001B05E4 /* HourlyCollectionView.swift */,
+			);
+			path = CollectionView;
+			sourceTree = "<group>";
+		};
 		AECFB3F52387D61D00FEA01E /* Model */ = {
 			isa = PBXGroup;
 			children = (
@@ -101,6 +114,7 @@
 				AE2704252387F58700BD9E64 /* DailyCell.swift */,
 				AEE8C2DE238A94D200CE07D9 /* CurrentlyCell.swift */,
 				AEECB584238E6F840007FCD7 /* CurrentDescriptionCell.swift */,
+				AE9B80B623902AC6001B05E4 /* CollectionView */,
 			);
 			path = TableView;
 			sourceTree = "<group>";
@@ -238,10 +252,12 @@
 			files = (
 				AEECB583238E5DBF0007FCD7 /* WeatherForecastViewModel.swift in Sources */,
 				AE2704262387F58700BD9E64 /* DailyCell.swift in Sources */,
+				AE9B80BA239031C2001B05E4 /* HourlyCollectionView.swift in Sources */,
 				AEF4AD202386AB5400956112 /* WeatherForecast.swift in Sources */,
 				AE001E3A23855E4D006B37D6 /* AppDelegate.swift in Sources */,
 				AECFB3F42387D61600FEA01E /* WeatherForecastController.swift in Sources */,
 				AE001E4C23857024006B37D6 /* WeatherItemController.swift in Sources */,
+				AE9B80B823902B3B001B05E4 /* HourlyCell.swift in Sources */,
 				AEECB585238E6F840007FCD7 /* CurrentDescriptionCell.swift in Sources */,
 				AEE8C2DF238A94D200CE07D9 /* CurrentlyCell.swift in Sources */,
 				AECFB3F72387E98300FEA01E /* HeaderView.swift in Sources */,
