@@ -14,47 +14,49 @@ final class HourlyCollectionViewCell: UICollectionViewCell {
     
     static let hourlyCellID: String = "hourlyCellID"
 
-    private var hourLabel: UILabel = {
+    private let hourLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 1
         label.textColor = .white
-        label.font = UIFont.systemFont(ofSize: 18, weight: .thin)
+        label.font = .systemFont(ofSize: 18, weight: .thin)
         label.textAlignment = .center
         return label
     }()
     
-    private var weatherIconImage: UIImageView = {
+    private let weatherIconImage: UIImageView = {
         let image = UIImageView()
         image.contentMode = .scaleAspectFit
-        image.backgroundColor = UIColor.clear
+        image.backgroundColor = .clear
         return image
     }()
     
-    private var temperatureLabel: UILabel = {
+    private let temperatureLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 1
         label.textColor = .white
-        label.font = UIFont.systemFont(ofSize: 18, weight: .thin)
+        label.font = .systemFont(ofSize: 18, weight: .thin)
         label.textAlignment = .center
         return label
     }()
     
     // MARK: - Public
     
-    func configure(with condition: WeatherForecast.HourlyConditionsList?) {
+    func configure(with condition: NetworkWeatherForecast.HourlyConditionsList?, indexPath: IndexPath) {
         guard let condition = condition else { return }
-        
+    
         hourLabel.text = {
             let date = Date(timeIntervalSince1970: condition.time)
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "HH"
-            return dateFormatter.string(from: date)
+            
+            if indexPath.item == 0 {
+                return "Сейчас"
+            } else {
+                return dateFormatter.string(from: date)
+            }
         }()
     
-        weatherIconImage.image = {
-            let image = UIImage(named: condition.icon)
-            return image
-        }()
+        weatherIconImage.image = UIImage(named: condition.icon)
         
         temperatureLabel.text = {
             let convertToCelsius = ((condition.temperature - 32)*(5/9))
@@ -62,6 +64,8 @@ final class HourlyCollectionViewCell: UICollectionViewCell {
         }()
     }
     
+    // MARK: - Init
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -76,6 +80,7 @@ final class HourlyCollectionViewCell: UICollectionViewCell {
     // MARK: - Layout
     
     private func makeLayout() {
+        
         [hourLabel, weatherIconImage, temperatureLabel].forEach { contentView.addSubview($0) }
         
         hourLabel.snp.makeConstraints {

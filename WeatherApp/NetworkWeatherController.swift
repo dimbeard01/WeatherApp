@@ -6,33 +6,34 @@
 //  Copyright © 2019 Dima Surkov. All rights reserved.
 //
 
-    //MARK: - WIP
 
 import UIKit
-//
-class WeatherItemController {
+
+final class NetworkWeatherController {
     
-    let baseURL = URL(string: "https://api.darksky.net/forecast/cb1efcb9b8a2a3c520bd3193b75ec38d/54.98848,73.324234")!
+    private let stringURL = "https://api.darksky.net/forecast/cb1efcb9b8a2a3c520bd3193b75ec38d/54.98848,73.324234"
+    static let shared = NetworkWeatherController()
     
-    static let shared = WeatherItemController()
-    
-    func fetchWeatherForecast(completion: @escaping (WeatherForecast?) -> Void){
+    func fetchWeatherForecast(completion: @escaping (NetworkWeatherForecast?) -> Void) {
+        
+        guard let baseURL = URL(string: stringURL) else { return }
+        
         URLSession.shared.dataTask(with: baseURL) { (data, response, error) in
             if let error = error {
                 print(error)
                 completion(nil)
                 return
             }
-  
+            
             #if DEBUG
             print(response.debugDescription)
             #endif
             
             guard let data = data else { return completion(nil) }
             
-            if let weatherData: WeatherForecast = try? JSONDecoder().decode(WeatherForecast.self, from: data) {
+            if let weatherData: NetworkWeatherForecast = try? JSONDecoder().decode(NetworkWeatherForecast.self, from: data) {
                 completion(weatherData)
-            }else {
+            } else {
                 completion(nil)
             }
         }.resume()

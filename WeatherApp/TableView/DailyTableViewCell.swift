@@ -1,12 +1,10 @@
 //
-//  DailyCell.swift
+//  DailyTableViewCell.swift
 //  WeatherApp
 //
 //  Created by Dima Surkov on 22.11.2019.
 //  Copyright © 2019 Dima Surkov. All rights reserved.
 //
-
-    // MARK: - WIP
 
 import UIKit
 
@@ -57,6 +55,7 @@ final class DailyTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
+        selectionStyle = .none
         backgroundColor = .clear
         makeLayout()
     }
@@ -67,8 +66,9 @@ final class DailyTableViewCell: UITableViewCell {
     
     // MARK: - Public
     
-    func configure(with condition: WeatherForecast.DailyConditionsList) {
-
+    func configure(with condition: NetworkWeatherForecast.DailyConditionsList?) {
+        guard let condition = condition else { return }
+        
         temperatureNightLabel.text = {
             let convertToCelsius: Double = (condition.temperatureLow - 32) * (5 / 9)
             return String(format: "%.f", convertToCelsius)
@@ -93,34 +93,36 @@ final class DailyTableViewCell: UITableViewCell {
     // MARK: - Layout
 
     private func makeLayout() {
-         [dayOfWeekLabel, weatherIconImage, temperatureDayLabel, temperatureNightLabel].forEach { contentView.addSubview($0) }
         
+        [dayOfWeekLabel, weatherIconImage, temperatureDayLabel, temperatureNightLabel].forEach { contentView.addSubview($0) }
+        
+        let width = contentView.bounds.width * 0.38
         dayOfWeekLabel.snp.makeConstraints {
-            $0.top.equalTo(contentView.snp.top).offset(5)
-            $0.bottom.equalTo(contentView.snp.bottom).offset(-5)
-            $0.leading.equalTo(contentView.snp.leading).offset(20)
-            $0.width.equalTo((38*contentView.frame.width)/100)
+            $0.top.equalToSuperview().offset(5)
+            $0.bottom.equalToSuperview().offset(-5)
+            $0.leading.equalToSuperview().offset(20)
+            $0.width.equalTo(width)
         }
         
         weatherIconImage.snp.makeConstraints {
-            $0.top.equalTo(contentView.snp.top).offset(5)
-            $0.bottom.equalTo(contentView.snp.bottom).offset(-5)
-            $0.centerX.equalTo(contentView.snp.centerX)
-            $0.height.equalTo(20)
-            $0.width.equalTo(25)
+            $0.top.equalToSuperview().offset(5)
+            $0.bottom.equalToSuperview().offset(-5)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.width.equalTo(20)
         }
-
+        
+        let trailing = contentView.frame.width / 4
         temperatureDayLabel.snp.makeConstraints {
-            $0.top.equalTo(contentView.snp.top).offset(5)
-            $0.bottom.equalTo(contentView.snp.bottom).offset(-5)
-            $0.trailing.equalTo(contentView.snp.trailing).offset(-contentView.frame.width/4)
+            $0.top.equalToSuperview().offset(5)
+            $0.bottom.equalToSuperview().offset(-5)
+            $0.trailing.equalToSuperview().offset(-trailing)
         }
         
         temperatureNightLabel.snp.makeConstraints {
-            $0.top.equalTo(contentView.snp.top).offset(5)
-            $0.bottom.equalTo(contentView.snp.bottom).offset(-5)
+            $0.top.equalToSuperview().offset(5)
+            $0.bottom.equalToSuperview().offset(-5)
             $0.leading.equalTo(temperatureDayLabel.snp.trailing)
-            $0.trailing.equalTo(contentView.snp.trailing).offset(-20)
+            $0.trailing.equalToSuperview().offset(-20)
         }
     }
 }

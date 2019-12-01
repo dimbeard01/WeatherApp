@@ -8,7 +8,7 @@
 
 import UIKit
 
-struct WeatherForecast: Decodable {
+struct NetworkWeatherForecast: Decodable {
     let latitude: Double
     let longitude: Double
     let timezone: String
@@ -17,7 +17,7 @@ struct WeatherForecast: Decodable {
     let daily: DailyConditions
 }
 
-extension WeatherForecast {
+extension NetworkWeatherForecast {
     
     struct CurrentConditions: Decodable {
         let time: Double

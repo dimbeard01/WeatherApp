@@ -6,11 +6,9 @@
 //  Copyright © 2019 Dima Surkov. All rights reserved.
 //
 
-    // MARK: - WIP
-
 import UIKit
 
-final class CurrentlyCell: UITableViewCell {
+final class CurrentlyTableViewCell: UITableViewCell {
     
     // MARK: - Properties
     
@@ -27,28 +25,30 @@ final class CurrentlyCell: UITableViewCell {
         case uvIndex
     }
     
-    private var separator: UIView = {
+    private let separator: UIView = {
         let separator = UIView()
         separator.backgroundColor = .white
         return separator
     }()
     
-    private var descriptionLabel: UILabel = {
+    private let descriptionLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 1
         label.textColor = .lightGray
-        label.font = UIFont.systemFont(ofSize: 15, weight: .thin)
+        label.font = .systemFont(ofSize: 15, weight: .thin)
         return label
     }()
     
-    private var conditionLabel: UILabel = {
+    private let conditionLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 1
         label.textColor = .white
-        label.font = UIFont.systemFont(ofSize: 22, weight: .semibold)
+        label.font = .systemFont(ofSize: 22, weight: .semibold)
         return label
     }()
     
+    // MARK: - Init
+
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -63,42 +63,43 @@ final class CurrentlyCell: UITableViewCell {
     
     // MARK: - Public
     
-    func configure(with condition: Double, indexPath: Int ) {
-    
+    func configure(with condition: Double?, indexPath: Int) {
+        guard let condition = condition else { return }
+
         switch indexPath {
         case currentConditionType.precipProbability.rawValue:
             descriptionLabel.text = "вероятность осадков".uppercased()
-            let precipProbability = String(format: "%.0f", (condition*100))
+            let precipProbability = String(format: "%.0f", (condition * 100))
             conditionLabel.text = "\(precipProbability) %"
             
         case currentConditionType.humidity.rawValue:
             descriptionLabel.text = "влажность".uppercased()
-            let humidity = String(format: "%.0f", (condition*100))
+            let humidity = String(format: "%.0f", (condition * 100))
             conditionLabel.text = "\(humidity) %"
             
         case currentConditionType.windSpeed.rawValue:
             descriptionLabel.text = "ветер".uppercased()
-            let windSpeed = String(format: "%.0f", (condition*0.45))
+            let windSpeed = String(format: "%.0f", (condition * 0.45))
             conditionLabel.text = "\(windSpeed) м/с"
 
         case currentConditionType.apparentTemperature.rawValue:
             descriptionLabel.text = "ощущается как".uppercased()
-            let apparentTemperature = String(format: "%.0f", ((condition - 32)*(5/9)))
+            let apparentTemperature = String(format: "%.0f", ((condition - 32) * (5 / 9)))
             conditionLabel.text = "\(apparentTemperature)º"
             
         case currentConditionType.precipAccumulation.rawValue:
             descriptionLabel.text = "осадки".uppercased()
-            let precipAccumulation = String(format: "%.0f", (condition*0.39))
+            let precipAccumulation = String(format: "%.0f", (condition * 0.39))
             conditionLabel.text = "\(precipAccumulation) см"
             
         case currentConditionType.pressure.rawValue:
             descriptionLabel.text = "давление".uppercased()
-            let pressure = String(format: "%.1f", (condition*0.75))
+            let pressure = String(format: "%.1f", (condition * 0.75))
             conditionLabel.text = "\(pressure) мм рт.ст."
 
         case currentConditionType.visibility.rawValue:
             descriptionLabel.text = "видимость".uppercased()
-            let visibility = String(format: "%.1f", (condition*1.6))
+            let visibility = String(format: "%.1f", (condition * 1.6))
             conditionLabel.text = "\(visibility) км"
 
         case currentConditionType.uvIndex.rawValue:
@@ -115,25 +116,27 @@ final class CurrentlyCell: UITableViewCell {
     // MARK: - Layout
     
     private func makeLayout() {
+        
         [separator, descriptionLabel, conditionLabel].forEach { contentView.addSubview($0) }
+        
         descriptionLabel.snp.makeConstraints {
-            $0.top.equalTo(contentView.snp.top).offset(5)
-            $0.leading.equalTo(contentView.snp.leading).offset(20)
+            $0.top.equalToSuperview().offset(5)
+            $0.leading.equalToSuperview().offset(20)
             $0.bottom.equalTo(conditionLabel.snp.top).offset(-5)
         }
             
         conditionLabel.snp.makeConstraints {
             $0.top.equalTo(descriptionLabel.snp.bottom)
-            $0.leading.equalTo(contentView.snp.leading).offset(20)
-            $0.bottom.equalTo(separator.snp.top).offset(-7)
+            $0.leading.equalToSuperview().offset(20)
+            $0.bottom.equalTo(separator.snp.top).offset(-5)
         }
         
         separator.snp.makeConstraints {
             $0.top.equalTo(conditionLabel.snp.bottom)
-            $0.leading.equalTo(contentView.snp.leading).offset(20)
-            $0.bottom.equalTo(contentView.snp.bottom).offset(-1)
-            $0.trailing.equalTo(contentView.snp.trailing).offset(-20)
-            $0.height.equalTo(0.7)
+            $0.leading.equalToSuperview().offset(20)
+            $0.bottom.equalToSuperview()
+            $0.trailing.equalToSuperview().offset(-20)
+            $0.height.equalTo(0.5)
         }
     }
 }

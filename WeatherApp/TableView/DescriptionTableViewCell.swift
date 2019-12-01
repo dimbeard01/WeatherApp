@@ -10,36 +10,39 @@
 
 import UIKit
 
-final class CurrentDescriptionCell: UITableViewCell {
+final class DescriptionTableViewCell: UITableViewCell {
     
     // MARK: - Properties
     
     static let identifier: String = "currentDescriptionCellID"
 
-    private var topSeparator: UIView = {
+    private let topSeparator: UIView = {
         let separator = UIView()
         separator.backgroundColor = .white
         return separator
     }()
     
-    private var bottomSeparator: UIView = {
+    private let bottomSeparator: UIView = {
         let separator = UIView()
         separator.backgroundColor = .white
         return separator
     }()
     
-    private var descriptionLabel: UILabel = {
+    private let descriptionLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
         label.textColor = .white
-        label.font = UIFont.systemFont(ofSize: 18, weight: .thin)
+        label.font = .systemFont(ofSize: 18, weight: .thin)
         return label
     }()
     
+    // MARK: - Init
+
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
+        selectionStyle = .none
         backgroundColor = .clear
-        [topSeparator, descriptionLabel, bottomSeparator].forEach { contentView.addSubview($0) }
         makeLayout()
     }
     
@@ -48,8 +51,10 @@ final class CurrentDescriptionCell: UITableViewCell {
     }
     
     // MARK: - Public
+    
+    func configure(with condition: NetworkWeatherForecast.CurrentConditions?) {
+        guard let condition = condition else { return }
 
-    func configure(with condition: WeatherForecast.CurrentConditions) {
         let temperatureAConvertToCelsius = (condition.temperature - 32) * (5 / 9)
         let temeperature =  String(format: "%.f", temperatureAConvertToCelsius)
         
@@ -84,25 +89,25 @@ final class CurrentDescriptionCell: UITableViewCell {
     // MARK: - Layout
 
     private func makeLayout() {
+        
+        [topSeparator, descriptionLabel, bottomSeparator].forEach { contentView.addSubview($0) }
+
         topSeparator.snp.makeConstraints {
-            $0.top.equalTo(contentView.snp.top)
-            $0.leading.equalTo(contentView.snp.leading)
-            $0.trailing.equalTo(contentView.snp.trailing)
+            $0.top.equalToSuperview()
+            $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(0.5)
         }
         
         descriptionLabel.snp.makeConstraints {
-            $0.top.equalTo(contentView.snp.top).offset(10)
-            $0.leading.equalTo(contentView.snp.leading).offset(20)
+            $0.top.equalToSuperview().offset(10)
+            $0.leading.equalToSuperview().offset(20)
             $0.bottom.equalTo(bottomSeparator.snp.top).offset(-10)
-            $0.trailing.equalTo(contentView.snp.trailing).offset(-40)
+            $0.trailing.equalToSuperview().offset(-40)
         }
         
         bottomSeparator.snp.makeConstraints {
             $0.top.equalTo(descriptionLabel.snp.bottom)
-            $0.leading.equalTo(contentView.snp.leading)
-            $0.bottom.equalTo(contentView.snp.bottom)
-            $0.trailing.equalTo(contentView.snp.trailing)
+            $0.leading.trailing.bottom.equalToSuperview()
             $0.height.equalTo(0.5)
         }
     }

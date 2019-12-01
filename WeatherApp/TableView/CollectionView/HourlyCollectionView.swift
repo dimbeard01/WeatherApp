@@ -8,8 +8,10 @@
 
 import UIKit
 
-class HourlyCollectionView: UICollectionView {
+final class HourlyCollectionView: UICollectionView {
     
+    // MARK: - Properties
+
     var model: WeatherForecastViewModel? {
         didSet {
             reloadData()
@@ -40,6 +42,8 @@ class HourlyCollectionView: UICollectionView {
         return view
     }()
     
+    // MARK: - Init
+
     override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
         super.init(frame: .zero, collectionViewLayout: flowLayout)
         
@@ -55,6 +59,8 @@ class HourlyCollectionView: UICollectionView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Layout
+
     private func makeLayout() {
         backgroundView = wrapperBackgroundView
         wrapperBackgroundView.addSubview(bottomSeparator)
@@ -74,28 +80,33 @@ class HourlyCollectionView: UICollectionView {
     }
 }
 
+    // MARK: - Collection view data source
+
 extension HourlyCollectionView: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return model?.hoursList.count ?? 0
+        return 24
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HourlyCollectionViewCell.hourlyCellID, for: indexPath) as? HourlyCollectionViewCell else { return UICollectionViewCell() }
         
-        cell.configure(with: model?.hoursList[indexPath.item])
-        
+        cell.configure(with: model?.hoursList[indexPath.item], indexPath: indexPath)
         return cell
     }
     
 }
 
+    // MARK: - Collection view delegate flow layout
 
 extension HourlyCollectionView: UICollectionViewDelegateFlowLayout {
-    
+
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 40, height: collectionView.bounds.height)
+        if indexPath.item == 0 {
+            return CGSize(width: 70, height: collectionView.bounds.height)
+        } else {
+            return CGSize(width: 64, height: collectionView.bounds.height)
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
