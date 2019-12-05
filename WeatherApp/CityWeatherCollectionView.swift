@@ -11,6 +11,16 @@ import UIKit
 final class CityWeatherCollectionView: UICollectionView {
     
     // MARK: - Properties
+    
+    var onPageChanged: ((Int) -> Void)?
+    
+    var model: [NetworkWeatherForecast]? {
+        didSet {
+            DispatchQueue.main.async {
+                self.reloadData()
+            }
+        }
+    }
 
     private let flowLayout: UICollectionViewFlowLayout = {
         let layout = UICollectionViewFlowLayout()
@@ -44,12 +54,12 @@ final class CityWeatherCollectionView: UICollectionView {
 extension CityWeatherCollectionView: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 2
+        return model?.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CityWeatherCollectionViewCell.identifier, for: indexPath) as? CityWeatherCollectionViewCell else { return UICollectionViewCell() }
-        
+        cell.model = model?[indexPath.item]
         return cell
     }
     
@@ -64,11 +74,15 @@ extension CityWeatherCollectionView: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 30
+        return 0
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 0
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        onPageChanged?(indexPath.item)
     }
     
 }

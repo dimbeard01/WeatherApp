@@ -7,10 +7,18 @@
 //
 
 import UIKit
+import CoreLocation
 
 final class CityWeatherCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Properties
+    
+    var model: NetworkWeatherForecast? {
+        didSet {
+            guard let model = model else { return }
+            updateUI(with: model)
+        }
+    }
     
     static let identifier: String = "identifier"
 
@@ -38,7 +46,7 @@ final class CityWeatherCollectionViewCell: UICollectionViewCell {
         super.init(frame: frame)
         
         makeLayout()
-        fetchWeatherForecast()
+//        fetchWeatherForecast()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -47,14 +55,25 @@ final class CityWeatherCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Support
     
-    private func fetchWeatherForecast() {
-        NetworkWeatherController.shared.fetchWeatherForecast { [weak self] (forecast) in
+    func fetchWeatherForecast() {
+//        Network.shared.fetchWeatherForecast { [weak self] (forecast) in
+//            if let forecast = forecast {
+//                DispatchQueue.main.async {
+//                    self?.updateUI(with: forecast)
+//                }
+//            }
+//        }
+    
+        let coordinate: CLLocationCoordinate2D = .init(latitude: 55.041986, longitude: 82.967978)
+        Network.shared.fetchWeatherForecast(coordinate: coordinate) { [weak self] forecast in
             if let forecast = forecast {
                 DispatchQueue.main.async {
                     self?.updateUI(with: forecast)
                 }
             }
         }
+        
+        
     }
     
     private func updateUI(with data: NetworkWeatherForecast) {
