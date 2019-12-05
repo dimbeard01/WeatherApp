@@ -1,5 +1,5 @@
 //
-//  WeatherForecast.swift
+//  NetworkWeatherForecast.swift
 //  WeatherApp
 //
 //  Created by Dima Surkov on 21.11.2019.

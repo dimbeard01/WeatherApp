@@ -1,5 +1,5 @@
 //
-//  WeatherForecastController.swift
+//  CityWeatherCollectionViewCell.swift
 //  WeatherApp
 //
 //  Created by Dima Surkov on 22.11.2019.
@@ -7,12 +7,13 @@
 //
 
 import UIKit
-import SnapKit
 
-final class WeatherForecastController: UIViewController {
+final class CityWeatherCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Properties
     
+    static let identifier: String = "identifier"
+
     private var weatherModel: WeatherForecastViewModel?
     private let headerView = HeaderView()
     private let collectionHeader = HourlyCollectionView()
@@ -23,22 +24,25 @@ final class WeatherForecastController: UIViewController {
         tableView.register(DescriptionTableViewCell.self, forCellReuseIdentifier: DescriptionTableViewCell.identifier)
         tableView.register(CurrentlyTableViewCell.self, forCellReuseIdentifier: CurrentlyTableViewCell.currentlyCellID)
         tableView.tableHeaderView = collectionHeader
-        tableView.dataSource = self
+        tableView.dataSource = self 
         tableView.delegate = self
         tableView.backgroundColor = .clear
         tableView.showsVerticalScrollIndicator = false
         tableView.separatorStyle = .none
         return tableView
     }()
+  
+    // MARK: - Init
     
-    // MARK: - LifeCycle
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         
         makeLayout()
-        view.backgroundColor = UIColor(patternImage: #imageLiteral(resourceName: "back"))
         fetchWeatherForecast()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     // MARK: - Support
@@ -66,8 +70,8 @@ final class WeatherForecastController: UIViewController {
     // MARK: - Layout
     
     private func makeLayout() {
-        view.addSubview(headerView)
-        view.addSubview(tableView)
+        self.addSubview(headerView)
+        self.addSubview(tableView)
         
         headerView.snp.makeConstraints {
             $0.top.equalToSuperview()
@@ -81,18 +85,15 @@ final class WeatherForecastController: UIViewController {
             $0.trailing.equalToSuperview()
             $0.bottom.equalToSuperview()
         }
-    }
-    
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
         
-        collectionHeader.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 100)
+        collectionHeader.frame = CGRect(x: 0, y: 0, width: self.bounds.width, height: 100)
+
     }
 }
 
     // MARK: - Section type enumeration
 
-extension WeatherForecastController {
+extension CityWeatherCollectionViewCell {
     
     enum SectionType: Int, CaseIterable {
         case daily = 0
@@ -128,7 +129,7 @@ extension WeatherForecastController {
 
     // MARK: - Table view data source
 
-extension WeatherForecastController: UITableViewDataSource {
+extension CityWeatherCollectionViewCell: UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
         return SectionType.allCases.count
@@ -191,7 +192,7 @@ extension WeatherForecastController: UITableViewDataSource {
 
     // MARK: - Table view delegate
 
-extension WeatherForecastController: UITableViewDelegate {
+extension CityWeatherCollectionViewCell: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         

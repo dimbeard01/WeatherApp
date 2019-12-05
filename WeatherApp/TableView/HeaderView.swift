@@ -12,13 +12,6 @@ final class HeaderView: UIView {
     
     // MARK: - Properties
     
-    private let headerView: UIView = {
-        let view = UIView()
-        view.backgroundColor = #colorLiteral(red: 0.3013367828, green: 0.3639888053, blue: 0.6645205959, alpha: 1)
-        view.alpha = 0.3
-        return view
-    }()
-    
     private let cityLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 1
@@ -61,17 +54,12 @@ final class HeaderView: UIView {
     // MARK: - Layout
 
    private func makeLayout() {
-        
-        [headerView, cityLabel, temperatureLabel].forEach { addSubview($0) }
-        
-        headerView.snp.makeConstraints {
-            $0.top.leading.trailing.equalToSuperview()
-            $0.height.equalTo(100)
-        }
+        addSubview(cityLabel)
+        addSubview(temperatureLabel)
         
         cityLabel.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
-            $0.top.equalTo(headerView.snp.top).offset(30)
+            $0.top.equalToSuperview().offset(20)
         }
         
         temperatureLabel.snp.makeConstraints {

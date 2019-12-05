@@ -1,5 +1,5 @@
 //
-//  CurrentDescriptionCell.swift
+//  DescriptionTableViewCell.swift
 //  WeatherApp
 //
 //  Created by Dima Surkov on 27.11.2019.

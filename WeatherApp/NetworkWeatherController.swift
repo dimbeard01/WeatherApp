@@ -1,5 +1,5 @@
 //
-//  WeatherItemController.swift
+//  NetworkWeatherController.swift
 //  WeatherApp
 //
 //  Created by Dima Surkov on 20.11.2019.
