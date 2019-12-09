@@ -52,9 +52,9 @@ final class DescriptionTableViewCell: UITableViewCell {
     
     // MARK: - Public
     
-    func configure(with condition: NetworkWeatherForecast.CurrentConditions?) {
+    func configure(with condition: WeatherForecastViewModel.CurrentConditions?) {
         guard let condition = condition else { return }
-
+        
         let temperatureAConvertToCelsius = (condition.temperature - 32) * (5 / 9)
         let temeperature =  String(format: "%.f", temperatureAConvertToCelsius)
         
@@ -89,7 +89,6 @@ final class DescriptionTableViewCell: UITableViewCell {
     // MARK: - Layout
 
     private func makeLayout() {
-        
         [topSeparator, descriptionLabel, bottomSeparator].forEach { contentView.addSubview($0) }
 
         topSeparator.snp.makeConstraints {

@@ -14,14 +14,14 @@ final class CityWeatherCollectionView: UICollectionView {
     
     var onPageChanged: ((Int) -> Void)?
     
-    var model: [NetworkWeatherForecast]? {
+    var model: [WeatherForecastViewModel]? {
         didSet {
             DispatchQueue.main.async {
                 self.reloadData()
             }
         }
     }
-
+    
     private let flowLayout: UICollectionViewFlowLayout = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -45,8 +45,6 @@ final class CityWeatherCollectionView: UICollectionView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-
 }
 
     // MARK: - Collection view data source
@@ -84,5 +82,4 @@ extension CityWeatherCollectionView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         onPageChanged?(indexPath.item)
     }
-    
 }

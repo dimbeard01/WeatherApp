@@ -15,16 +15,49 @@ struct WeatherForecastViewModel {
     typealias CurrentConditions = NetworkWeatherForecast.CurrentConditions
     
     let timezone: String
-    let daysList: [DailyConditionsList]
+    var daysList: [DailyConditionsList]
     let hoursList: [HourlyConditionsList]
     let currentConditionsList: [Double]
     let currentDescription: CurrentConditions
+    var cityName: String
     
-    init(with model: NetworkWeatherForecast) {
-        timezone = model.timezone
-        daysList = model.daily.data
-        hoursList = model.hourly.data
-        currentConditionsList = NetworkWeatherForecast.CurrentlyConditionsList(with: model.currently).data
-        currentDescription = model.currently
+    init(with model: CityForecastViewModel) {
+        timezone = model.forecast.timezone
+        daysList = model.forecast.daily.data
+        daysList.remove(at: 0)
+        hoursList = model.forecast.hourly.data
+        currentConditionsList = NetworkWeatherForecast.CurrentlyConditionsList(with: model.forecast.currently).data
+        currentDescription = model.forecast.currently
+        cityName = model.city
     }
+}
+
+struct CityForecastViewModel {
+    
+    typealias City = Storage.City
+    
+    let forecast: NetworkWeatherForecast
+    var city: String = ""
+    
+    init(with model: NetworkWeatherForecast, cities: [City]) {
+        forecast = model
+        city = getCity(cities: cities)
+    }
+    
+    func getCity(cities: [City]) -> String {
+        var city = ""
+        
+        for cityModel in cities {
+            if cityModel.coordinate.latitude == forecast.latitude, cityModel.coordinate.longitude == forecast.longitude {
+                city = cityModel.name
+                break
+            }
+        }
+        return city
+    }
+}
+
+struct Coordinate: Hashable {
+    let latitude: Double
+    let longitude: Double
 }

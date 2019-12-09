@@ -13,7 +13,7 @@ final class CityWeatherCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Properties
     
-    var model: NetworkWeatherForecast? {
+    var model: WeatherForecastViewModel? {
         didSet {
             guard let model = model else { return }
             updateUI(with: model)
@@ -21,7 +21,7 @@ final class CityWeatherCollectionViewCell: UICollectionViewCell {
     }
     
     static let identifier: String = "identifier"
-
+    private let storage = Storage()
     private var weatherModel: WeatherForecastViewModel?
     private let headerView = HeaderView()
     private let collectionHeader = HourlyCollectionView()
@@ -44,9 +44,7 @@ final class CityWeatherCollectionViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
         makeLayout()
-//        fetchWeatherForecast()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -54,34 +52,12 @@ final class CityWeatherCollectionViewCell: UICollectionViewCell {
     }
     
     // MARK: - Support
-    
-    func fetchWeatherForecast() {
-//        Network.shared.fetchWeatherForecast { [weak self] (forecast) in
-//            if let forecast = forecast {
-//                DispatchQueue.main.async {
-//                    self?.updateUI(with: forecast)
-//                }
-//            }
-//        }
-    
-        let coordinate: CLLocationCoordinate2D = .init(latitude: 55.041986, longitude: 82.967978)
-        Network.shared.fetchWeatherForecast(coordinate: coordinate) { [weak self] forecast in
-            if let forecast = forecast {
-                DispatchQueue.main.async {
-                    self?.updateUI(with: forecast)
-                }
-            }
-        }
-        
-        
-    }
-    
-    private func updateUI(with data: NetworkWeatherForecast) {
+
+    private func updateUI(with model: WeatherForecastViewModel) {
         DispatchQueue.main.async {
-            let model = WeatherForecastViewModel(with: data)
             self.collectionHeader.model = model
             self.weatherModel = model
-            self.headerView.configure(with: model.currentDescription)
+            self.headerView.configure(with: model.currentDescription, name: model.cityName)
             self.tableView.reloadData()
         }
     }
@@ -93,7 +69,7 @@ final class CityWeatherCollectionViewCell: UICollectionViewCell {
         self.addSubview(tableView)
         
         headerView.snp.makeConstraints {
-            $0.top.equalToSuperview()
+            $0.top.equalToSuperview() 
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(100)
         }

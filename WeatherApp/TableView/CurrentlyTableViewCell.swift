@@ -13,17 +13,6 @@ final class CurrentlyTableViewCell: UITableViewCell {
     // MARK: - Properties
     
     static let currentlyCellID: String = "currentlyCellID"
-
-    enum currentConditionType: Int {
-        case precipProbability = 0
-        case humidity
-        case windSpeed
-        case apparentTemperature
-        case precipAccumulation
-        case pressure
-        case visibility
-        case uvIndex
-    }
     
     private let separator: UIView = {
         let separator = UIView()
@@ -67,42 +56,42 @@ final class CurrentlyTableViewCell: UITableViewCell {
         guard let condition = condition else { return }
 
         switch indexPath {
-        case currentConditionType.precipProbability.rawValue:
+        case CurrentConditionType.precipProbability.rawValue:
             descriptionLabel.text = "вероятность осадков".uppercased()
             let precipProbability = String(format: "%.0f", (condition * 100))
             conditionLabel.text = "\(precipProbability) %"
             
-        case currentConditionType.humidity.rawValue:
+        case CurrentConditionType.humidity.rawValue:
             descriptionLabel.text = "влажность".uppercased()
             let humidity = String(format: "%.0f", (condition * 100))
             conditionLabel.text = "\(humidity) %"
             
-        case currentConditionType.windSpeed.rawValue:
+        case CurrentConditionType.windSpeed.rawValue:
             descriptionLabel.text = "ветер".uppercased()
             let windSpeed = String(format: "%.0f", (condition * 0.45))
             conditionLabel.text = "\(windSpeed) м/с"
 
-        case currentConditionType.apparentTemperature.rawValue:
+        case CurrentConditionType.apparentTemperature.rawValue:
             descriptionLabel.text = "ощущается как".uppercased()
             let apparentTemperature = String(format: "%.0f", ((condition - 32) * (5 / 9)))
             conditionLabel.text = "\(apparentTemperature)º"
             
-        case currentConditionType.precipAccumulation.rawValue:
+        case CurrentConditionType.precipAccumulation.rawValue:
             descriptionLabel.text = "осадки".uppercased()
             let precipAccumulation = String(format: "%.0f", (condition * 0.39))
             conditionLabel.text = "\(precipAccumulation) см"
             
-        case currentConditionType.pressure.rawValue:
+        case CurrentConditionType.pressure.rawValue:
             descriptionLabel.text = "давление".uppercased()
             let pressure = String(format: "%.1f", (condition * 0.75))
             conditionLabel.text = "\(pressure) мм рт.ст."
 
-        case currentConditionType.visibility.rawValue:
+        case CurrentConditionType.visibility.rawValue:
             descriptionLabel.text = "видимость".uppercased()
             let visibility = String(format: "%.1f", (condition * 1.6))
             conditionLabel.text = "\(visibility) км"
 
-        case currentConditionType.uvIndex.rawValue:
+        case CurrentConditionType.uvIndex.rawValue:
             descriptionLabel.text = "уф-индекс".uppercased()
             let uvIndex = String(format: "%.0f", (condition))
             conditionLabel.text = "\(uvIndex)"
@@ -116,7 +105,6 @@ final class CurrentlyTableViewCell: UITableViewCell {
     // MARK: - Layout
     
     private func makeLayout() {
-        
         [separator, descriptionLabel, conditionLabel].forEach { contentView.addSubview($0) }
         
         descriptionLabel.snp.makeConstraints {
@@ -138,5 +126,21 @@ final class CurrentlyTableViewCell: UITableViewCell {
             $0.trailing.equalToSuperview().offset(-20)
             $0.height.equalTo(0.5)
         }
+    }
+}
+
+    // MARK: - Current condition type enumeration
+
+extension CurrentlyTableViewCell {
+    
+    enum CurrentConditionType: Int {
+        case precipProbability = 0
+        case humidity
+        case windSpeed
+        case apparentTemperature
+        case precipAccumulation
+        case pressure
+        case visibility
+        case uvIndex
     }
 }

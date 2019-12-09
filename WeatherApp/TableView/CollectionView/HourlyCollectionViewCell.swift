@@ -41,7 +41,7 @@ final class HourlyCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Public
     
-    func configure(with condition: NetworkWeatherForecast.HourlyConditionsList?, indexPath: IndexPath) {
+    func configure(with condition: WeatherForecastViewModel.HourlyConditionsList? , indexPath: IndexPath) {
         guard let condition = condition else { return }
     
         hourLabel.text = {

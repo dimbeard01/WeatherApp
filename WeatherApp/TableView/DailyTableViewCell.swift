@@ -66,7 +66,7 @@ final class DailyTableViewCell: UITableViewCell {
     
     // MARK: - Public
     
-    func configure(with condition: NetworkWeatherForecast.DailyConditionsList?) {
+    func configure(with condition: WeatherForecastViewModel.DailyConditionsList?) {
         guard let condition = condition else { return }
         
         temperatureNightLabel.text = {
@@ -93,7 +93,6 @@ final class DailyTableViewCell: UITableViewCell {
     // MARK: - Layout
 
     private func makeLayout() {
-        
         [dayOfWeekLabel, weatherIconImage, temperatureDayLabel, temperatureNightLabel].forEach { contentView.addSubview($0) }
         
         let width = contentView.bounds.width * 0.38
