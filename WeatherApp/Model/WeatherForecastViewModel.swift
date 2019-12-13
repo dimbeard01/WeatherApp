@@ -24,6 +24,8 @@ struct WeatherForecastViewModel {
     init(with model: CityForecastViewModel) {
         timezone = model.forecast.timezone
         daysList = model.forecast.daily.data
+
+        //First element is not necessary
         daysList.remove(at: 0)
         hoursList = model.forecast.hourly.data
         currentConditionsList = NetworkWeatherForecast.CurrentlyConditionsList(with: model.forecast.currently).data

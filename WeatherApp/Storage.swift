@@ -27,7 +27,7 @@ final class Storage {
                 City(name: "Ростов-на-Дону", coordinate: Coordinate(latitude: 47.221809, longitude: 39.720261)),
                 City(name: "Уфа", coordinate: Coordinate(latitude: 54.738762, longitude: 55.972054)),
                 City(name: "Красноярск", coordinate: Coordinate(latitude: 56.010052, longitude: 92.852600)),
-                City(name: "Перьм", coordinate: Coordinate(latitude: 58.006750, longitude: 56.228570)),
+                City(name: "Пермь", coordinate: Coordinate(latitude: 58.006750, longitude: 56.228570)),
                 City(name: "Воронеж", coordinate: Coordinate(latitude: 51.659908, longitude: 39.200089)),
                 City(name: "Волгоград", coordinate: Coordinate(latitude: 48.708050, longitude: 44.513302)),
                 City(name: "Краснодар", coordinate: Coordinate(latitude: 45.039268, longitude: 38.987221))]

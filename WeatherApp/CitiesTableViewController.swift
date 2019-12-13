@@ -11,7 +11,7 @@ import UIKit
 final class CitiesTableViewController: UITableViewController {
     
     // MARK: - Properties
-
+    
     var weatherViewController: WeatherViewController?
     private let storage = Storage()
     
@@ -19,7 +19,12 @@ final class CitiesTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        setupTableView()
+    }
+    
+    // MARK: - Support
+
+    private func setupTableView() {
         tableView = UITableView(frame: .zero, style: .plain)
         tableView.register(CityTableViewCell.self, forCellReuseIdentifier: CityTableViewCell.identifier)
         tableView.dataSource = self
@@ -49,12 +54,12 @@ final class CitiesTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let array = self.weatherViewController?.addedCityIndex
+        let array = weatherViewController?.addedCityIndex
         if array?.contains(indexPath) ?? false {
             tableView.deselectRow(at: indexPath, animated: true)
         } else {
-            self.weatherViewController?.addedCityIndex.append(indexPath)
-            self.weatherViewController?.fetchWeatherForecast(cityLatitude: self.storage.cities[indexPath.row].coordinate.latitude, cityLongitude: self.storage.cities[indexPath.row].coordinate.longitude)
+            weatherViewController?.addedCityIndex.append(indexPath)
+            weatherViewController?.fetchWeatherForecast(cityLatitude: self.storage.cities[indexPath.row].coordinate.latitude, cityLongitude: self.storage.cities[indexPath.row].coordinate.longitude)
             dismiss(animated: true) {
                 self.weatherViewController?.scrollToNewItem()
             }

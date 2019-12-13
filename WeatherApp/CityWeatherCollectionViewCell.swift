@@ -80,12 +80,14 @@ final class CityWeatherCollectionViewCell: UICollectionViewCell {
             $0.trailing.equalToSuperview()
             $0.bottom.equalToSuperview()
         }
-        
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
         collectionHeader.frame = CGRect(x: 0, y: 0, width: self.bounds.width, height: 100)
-
     }
 }
-
+    
     // MARK: - Section type enumeration
 
 extension CityWeatherCollectionViewCell {
@@ -191,18 +193,15 @@ extension CityWeatherCollectionViewCell: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
-        switch indexPath.section {
-        case SectionType.daily.rawValue:
+        switch SectionType(section: indexPath.section) {
+        case .daily:
             return SectionType.daily.height
             
-        case SectionType.description.rawValue:
+        case .description:
             return SectionType.description.height
             
-        case SectionType.currently.rawValue:
+        case .currently:
             return SectionType.currently.height
-            
-        default:
-            return 40
         }
     }
 }

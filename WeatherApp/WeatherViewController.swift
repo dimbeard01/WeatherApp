@@ -9,7 +9,7 @@
 import UIKit
 import SnapKit
 import CoreLocation
-
+    
 final class WeatherViewController: UIViewController {
     
     // MARK: - Properties
@@ -65,10 +65,11 @@ final class WeatherViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = UIColor(patternImage: #imageLiteral(resourceName: "back"))
+        view.backgroundColor = UIColor(patternImage: #imageLiteral(resourceName: "background"))
         makeLayout()
         setupCollectionView()
     }
+   
     
     // MARK: - Public
 
@@ -100,7 +101,7 @@ final class WeatherViewController: UIViewController {
     
     // MARK: - Layout
 
-    func makeLayout() {
+    private func makeLayout() {
         [collectionView, pageControlSeparator, pageControl, removeButton, addButton].forEach { view.addSubview($0) }
 
         collectionView.snp.makeConstraints {
