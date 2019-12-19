@@ -12,8 +12,7 @@ final class CitiesTableViewController: UITableViewController {
     
     // MARK: - Properties
     
-    var weatherViewController: WeatherViewController?
-    private let storage = Storage()
+    var onSelectCity: ((Storage.City) -> Void)?
     
     // MARK: - LifeCycle
     
@@ -35,15 +34,16 @@ final class CitiesTableViewController: UITableViewController {
     // MARK: - Table view data source
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return storage.cities.count
+        return Storage.shared.cities.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CityTableViewCell.identifier, for: indexPath) as? CityTableViewCell else { return UITableViewCell() }
         
-        cell.configure(with: storage.cities[indexPath.row])
+        let city = Storage.shared.cities[indexPath.row]
+        cell.configure(with: city)
         cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        cell.selectionStyle = .none
+        cell.isUserInteractionEnabled = city.chosen ? false : true
         return cell
     }
     
@@ -54,15 +54,12 @@ final class CitiesTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let array = weatherViewController?.addedCityIndex
-        if array?.contains(indexPath) ?? false {
-            tableView.deselectRow(at: indexPath, animated: true)
-        } else {
-            weatherViewController?.addedCityIndex.append(indexPath)
-            weatherViewController?.fetchWeatherForecast(cityLatitude: self.storage.cities[indexPath.row].coordinate.latitude, cityLongitude: self.storage.cities[indexPath.row].coordinate.longitude)
-            dismiss(animated: true) {
-                self.weatherViewController?.scrollToNewItem()
-            }
-        }
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        Storage.shared.cities[indexPath.row].chosen = true
+        onSelectCity?(Storage.shared.cities[indexPath.row])
+        print(Storage.shared.cities[indexPath.row])
+        
+        dismiss(animated: true)
     }
 }

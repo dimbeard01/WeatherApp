@@ -97,17 +97,6 @@ extension CityWeatherCollectionViewCell {
         case description
         case currently
         
-        var height: CGFloat {
-            switch self {
-            case .daily:
-                return 30
-            case .description:
-                return UITableView.automaticDimension
-            case .currently:
-                return 60
-            }
-        }
-        
         init(section: Int) {
             switch section {
             case 0:
@@ -192,16 +181,13 @@ extension CityWeatherCollectionViewCell: UITableViewDataSource {
 extension CityWeatherCollectionViewCell: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        
         switch SectionType(section: indexPath.section) {
         case .daily:
-            return SectionType.daily.height
-            
+            return 30
         case .description:
-            return SectionType.description.height
-            
+            return UITableView.automaticDimension
         case .currently:
-            return SectionType.currently.height
+            return 60
         }
     }
 }

@@ -11,7 +11,7 @@ import UIKit
 final class CityTableViewCell: UITableViewCell {
 
     // MARK: - Properties
-    
+
     static let identifier: String = "identifier"
     
     private let nameLabel: UILabel = {
@@ -34,6 +34,18 @@ final class CityTableViewCell: UITableViewCell {
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override var isUserInteractionEnabled: Bool {
+        didSet {
+            if isUserInteractionEnabled {
+                nameLabel.textColor = .white
+                backgroundColor = .clear
+            } else {
+                nameLabel.textColor = .black
+                backgroundColor = .lightGray
+            }
+        }
     }
     
     // MARK: - Public

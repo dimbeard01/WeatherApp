@@ -32,7 +32,7 @@ final class Network {
             
             guard let data = data else { return completion(nil) }
             if let networkWeatherForecast: NetworkWeatherForecast = try? JSONDecoder().decode(NetworkWeatherForecast.self, from: data) {
-                let cityViewModel = CityForecastViewModel(with: networkWeatherForecast, cities: Storage.getCities())
+                let cityViewModel = CityForecastViewModel(with: networkWeatherForecast, cities: Storage.shared.cities)
                 let weatherForecastViewModel = WeatherForecastViewModel(with: cityViewModel)
                 completion(weatherForecastViewModel)
             } else {

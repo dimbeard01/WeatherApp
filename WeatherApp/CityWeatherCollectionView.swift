@@ -45,6 +45,18 @@ final class CityWeatherCollectionView: UICollectionView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    private func scrollToNewItem() {
+        guard let model = self.model else { return }
+        let indexPath = IndexPath(item: model.count - 1, section: 0)
+        self.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        scrollToNewItem()
+    }
 }
 
     // MARK: - Collection view data source

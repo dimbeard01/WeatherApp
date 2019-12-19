@@ -24,13 +24,27 @@ final class WeatherViewController: UIViewController {
     }
     
     var currentPage: Int = 0
-    var addedCityIndex: [IndexPath] = []
+    var chosenCity: Storage.City? {
+        didSet {
+            guard let city = chosenCity else { return }
+            fetchWeatherForecast(
+                cityLatitude: city.coordinate.latitude,
+                cityLongitude: city.coordinate.longitude)
+        }
+    }
+    
     let collectionView = CityWeatherCollectionView()
 
     private let pageControlSeparator: UIView = {
         let separator = UIView()
         separator.backgroundColor = .white
         return separator
+    }()
+    
+    private let containerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .clear
+        return view
     }()
     
     private lazy var pageControl: UIPageControl = {
@@ -60,7 +74,19 @@ final class WeatherViewController: UIViewController {
         return button
     }()
     
+    private let backgroundImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = #imageLiteral(resourceName: "background")
+        imageView.contentMode = .scaleAspectFill
+        return imageView
+    }()
+    
     // MARK: - LifeCycle
+    
+    override func loadView() {
+        super.loadView()
+//        view = backgroundImageView
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -71,12 +97,8 @@ final class WeatherViewController: UIViewController {
     }
    
     
-    // MARK: - Public
-
-     func scrollToNewItem() {
-        let indexPath = IndexPath(item: forecasts.endIndex - 1, section: 0)
-        collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
-        collectionView.setNeedsLayout()
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
     }
     
     // MARK: - Support
@@ -90,7 +112,7 @@ final class WeatherViewController: UIViewController {
     
     // MARK: - Request
     
-    func fetchWeatherForecast(cityLatitude: Double, cityLongitude: Double) {
+    private func fetchWeatherForecast(cityLatitude: Double, cityLongitude: Double) {
         let coordinate: CLLocationCoordinate2D = .init(latitude: cityLatitude, longitude: cityLongitude)
         Network.shared.fetchWeatherForecast(coordinate: coordinate) { [weak self] forecast in
             if let forecast = forecast {
@@ -102,36 +124,36 @@ final class WeatherViewController: UIViewController {
     // MARK: - Layout
 
     private func makeLayout() {
-        [collectionView, pageControlSeparator, pageControl, removeButton, addButton].forEach { view.addSubview($0) }
+        [containerView, collectionView].forEach { view.addSubview($0) }
+        [pageControl, addButton, removeButton, pageControlSeparator].forEach { containerView.addSubview($0) }
 
+        containerView.snp.makeConstraints {
+            $0.bottom.leading.trailing.equalToSuperview()
+            $0.height.equalTo(64)
+        }
+        
         collectionView.snp.makeConstraints {
             $0.leading.trailing.top.equalToSuperview()
-            $0.bottom.equalTo(pageControl.snp.top)
+            $0.bottom.equalTo(containerView.snp.top)
         }
         
         pageControlSeparator.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview()
-            $0.top.equalTo(pageControl.snp.top)
+            $0.leading.top.trailing.equalToSuperview()
             $0.height.equalTo(0.5)
         }
         
         pageControl.snp.makeConstraints {
-            $0.leading.trailing.bottom.equalToSuperview()
-            $0.height.equalTo(50)
+            $0.center.equalToSuperview()
         }
         
         removeButton.snp.makeConstraints {
-            $0.top.equalTo(pageControl.snp.top).offset(10)
-            $0.leading.equalTo(pageControl.snp.leading).offset(10)
-            $0.bottom.equalTo(pageControl.snp.bottom).offset(-10)
-            $0.height.width.equalTo(30)
+            $0.top.leading.equalToSuperview().inset(10)
+            $0.height.width.equalTo(44)
         }
         
         addButton.snp.makeConstraints {
-            $0.top.equalTo(pageControl.snp.top).offset(10)
-            $0.trailing.equalTo(pageControl.snp.trailing).offset(-10)
-            $0.bottom.equalTo(pageControl.snp.bottom).offset(-10)
-            $0.height.width.equalTo(30)
+            $0.top.trailing.equalToSuperview().inset(10)
+            $0.height.width.equalTo(44)
         }
     }
     
@@ -140,13 +162,16 @@ final class WeatherViewController: UIViewController {
     @objc private func onDelete() {
         guard forecasts.indices.contains(currentPage) else { return }
         forecasts.remove(at: currentPage)
-        addedCityIndex.remove(at: currentPage)
+        // TODO: Unselect table view cell after delete
         collectionView.deleteItems(at: [IndexPath(item: currentPage, section: 0)])
     }
     
     @objc private func onAddCity() {
         let citiesTableViewController = CitiesTableViewController()
-        citiesTableViewController.weatherViewController = self
-        present(citiesTableViewController, animated: true, completion: nil)
+        citiesTableViewController.onSelectCity = { [weak self] city in
+            self?.chosenCity = city
+        }
+        
+        present(citiesTableViewController, animated: true)
     }
 }
